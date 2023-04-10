@@ -2690,6 +2690,59 @@ static const TypeInfo virtio_mini_pci_info = {
 };
 #endif
 
+/* virtio-allen-pci */
+static Property virtio_allen_pci_properties[] = {
+    DEFINE_PROP_UINT32("class", VirtIOPCIProxy, class_code, 0),
+    DEFINE_PROP_END_OF_LIST(),
+};
+
+static void virtio_allen_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+{
+    VirtIOAllenPCI *dev = VIRTIO_ALLEN_PCI(vpci_dev);
+    DeviceState *vdev = DEVICE(&dev->vdev);
+
+    if (vpci_dev->class_code != PCI_CLASS_OTHERS &&
+        vpci_dev->class_code != PCI_CLASS_MEMORY_RAM) { /* qemu < 1.1 */
+        vpci_dev->class_code = PCI_CLASS_OTHERS;
+    }
+
+    qdev_set_parent_bus(vdev, BUS(&vpci_dev->bus));
+    object_property_set_bool(OBJECT(vdev), true, "realized", errp);
+}
+
+static void virtio_allen_pci_class_init(ObjectClass *klass, void *data)
+{
+    DeviceClass *dc = DEVICE_CLASS(klass);
+    VirtioPCIClass *k = VIRTIO_PCI_CLASS(klass);
+    PCIDeviceClass *pcidev_k = PCI_DEVICE_CLASS(klass);
+    k->realize = virtio_allen_pci_realize;
+    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
+
+    dc->props = virtio_allen_pci_properties;
+    pcidev_k->vendor_id = PCI_VENDOR_ID_REDHAT_QUMRANET;
+    pcidev_k->device_id = PCI_DEVICE_ID_VIRTIO_ALLEN;
+    pcidev_k->revision = VIRTIO_PCI_ABI_VERSION;
+    pcidev_k->class_id = PCI_CLASS_OTHERS;
+}
+
+static void virtio_allen_pci_instance_init(Object *obj)
+{
+    VirtIOAllenPCI *dev = VIRTIO_ALLEN_PCI(obj);
+
+    virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
+                                TYPE_VIRTIO_ALLEN);
+}
+
+static const TypeInfo virtio_allen_pci_info = {
+    .name          = TYPE_VIRTIO_ALLEN_PCI,
+    .parent        = TYPE_VIRTIO_PCI,
+    .instance_size = sizeof(VirtIOAllenPCI),
+    .instance_init = virtio_allen_pci_instance_init,
+    .class_init    = virtio_allen_pci_class_init,
+};
+
+/* virtio-allen-pci */
+
 /* virtio-pci-bus */
 
 static void virtio_pci_bus_new(VirtioBusState *bus, size_t bus_size,
@@ -2771,6 +2824,7 @@ static void virtio_pci_register_types(void)
 #ifdef CONFIG_VIRTIO_MINI
     type_register_static(&virtio_mini_pci_info);
 #endif
+    type_register_static(&virtio_allen_pci_info);
 }
 
 type_init(virtio_pci_register_types)

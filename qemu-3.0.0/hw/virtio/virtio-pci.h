@@ -31,6 +31,8 @@
 #include "hw/virtio/virtio-mini.h"
 #endif
 
+#include "hw/virtio/virtio-allen.h"
+
 #include "hw/virtio/vhost-user-scsi.h"
 #if defined(CONFIG_VHOST_USER) && defined(CONFIG_LINUX)
 #include "hw/virtio/vhost-user-blk.h"
@@ -63,6 +65,9 @@ typedef struct VirtIOGPUPCI VirtIOGPUPCI;
 typedef struct VHostVSockPCI VHostVSockPCI;
 typedef struct VirtIOCryptoPCI VirtIOCryptoPCI;
 typedef struct VirtIOMiniPCI VirtIOMiniPCI;
+
+typedef struct VirtIOAllenPCI VirtIOAllenPCI;
+
 
 /* virtio-pci-bus */
 
@@ -438,4 +443,19 @@ struct VirtIOMiniPCI {
     VirtIOPCIProxy parent_obj;
     VirtIOMini vdev;
 };
+
 #endif
+
+/*
+ *  virtio-allen-pci: This extends VirtioPCIProxy
+ */
+
+#define TYPE_VIRTIO_ALLEN_PCI "virtio-allen-pci"
+#define VIRTIO_ALLEN_PCI(obj) \
+        OBJECT_CHECK(VirtIOMiniPCI, (obj), TYPE_VIRTIO_ALLEN_PCI)
+
+struct VirtIOAllenPCI {
+    VirtIOPCIProxy parent_obj;
+    VirtIOAllen vdev;
+};
+
