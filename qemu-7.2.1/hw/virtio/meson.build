@@ -18,6 +18,8 @@ else
   softmmu_virtio_ss.add(files('vhost-stub.c'))
 endif
 
+virtio_ss.add(files('virtio-allen.c', 'virtio-allen-pci.c'))
+
 virtio_ss.add(when: 'CONFIG_VIRTIO_BALLOON', if_true: files('virtio-balloon.c'))
 virtio_ss.add(when: 'CONFIG_VIRTIO_CRYPTO', if_true: files('virtio-crypto.c'))
 virtio_ss.add(when: 'CONFIG_VHOST_USER_FS', if_true: files('vhost-user-fs.c'))
