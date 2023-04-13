@@ -31,7 +31,7 @@ Folder=""
 
 
 #TEMPDIR=$ROOT_DIR/tmp_install
-PREBUILD_DIR=$ROOT_DIR/../prebuilt/arm64
+PREBUILD_DIR=$ROOT_DIR/../prebuilt/lib/arm64
 
 
 #cd $ROOT_DIR/$XXX_PACKAGE
